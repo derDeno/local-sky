@@ -33,7 +33,13 @@ async function init() {
     console.log("Verison:   0.0.1");
     console.log("boundingBox:   " + boundingBox);
 
-    /*
+    const params = new Proxy(new URLSearchParams(window.location.search), {
+        get: (searchParams, prop) => searchParams.get(prop),
+    });
+    let value = params.debug;
+    let jsonData;
+
+    if(params.debug == undefined) {
         const api = "https://opensky-network.org/api/states/all?" +
             "lamin=" + boundingBox.minLat +
             "&lomin=" + boundingBox.minLong +
@@ -41,12 +47,11 @@ async function init() {
             "&lomax=" + boundingBox.maxLong;
     
         const response = await fetch(api);
-        const jsonData = await response.json();
+        jsonData = await response.json();
+    }else {
+        jsonData = JSON.parse('{"time":1681341206,"states":[["3c5433","BCS48B  ","Germany",1681341206,1681341206,7.1473,50.0068,10050.78,false,264.84,64.33,-0.33,null,9761.22,"1000",false,0],["44cdc5","BEL3326 ","Belgium",1681341206,1681341206,7.9241,49.6011,10965.18,false,220.02,303.17,0,null,10698.48,"1000",false,0],["3c49d4","EWG3001 ","Germany",1681341206,1681341206,9.458,48.7349,1280.16,false,115.47,254.23,-1.3,null,1272.54,"1336",false,0],["406542","EZY67AH ","United Kingdom",1681341206,1681341206,7.5084,49.6738,11582.4,false,221.01,303.8,0,null,11330.94,"3236",false,0],["3c70b0","BCS58L  ","Germany",1681341206,1681341206,7.3626,49.9863,10668,false,265.4,61.65,0.33,null,10347.96,"1000",false,0]]}');
+    }
     
-    
-    /* use local data for dev */
-    const jsonData = JSON.parse('{"time":1681341206,"states":[["3c5433","BCS48B  ","Germany",1681341206,1681341206,7.1473,50.0068,10050.78,false,264.84,64.33,-0.33,null,9761.22,"1000",false,0],["44cdc5","BEL3326 ","Belgium",1681341206,1681341206,7.9241,49.6011,10965.18,false,220.02,303.17,0,null,10698.48,"1000",false,0],["3c49d4","EWG3001 ","Germany",1681341206,1681341206,9.458,48.7349,1280.16,false,115.47,254.23,-1.3,null,1272.54,"1336",false,0],["406542","EZY67AH ","United Kingdom",1681341206,1681341206,7.5084,49.6738,11582.4,false,221.01,303.8,0,null,11330.94,"3236",false,0],["3c70b0","BCS58L  ","Germany",1681341206,1681341206,7.3626,49.9863,10668,false,265.4,61.65,0.33,null,10347.96,"1000",false,0]]}');
-    console.log(jsonData);
 
     // parse the informations
     const data = parseData(jsonData.states);
