@@ -44,7 +44,7 @@ async function init() {
         const jsonData = await response.json();
     
     
-        /* use local data for dev */
+    /* use local data for dev */
     const jsonData = JSON.parse('{"time":1681341206,"states":[["3c5433","BCS48B  ","Germany",1681341206,1681341206,7.1473,50.0068,10050.78,false,264.84,64.33,-0.33,null,9761.22,"1000",false,0],["44cdc5","BEL3326 ","Belgium",1681341206,1681341206,7.9241,49.6011,10965.18,false,220.02,303.17,0,null,10698.48,"1000",false,0],["3c49d4","EWG3001 ","Germany",1681341206,1681341206,9.458,48.7349,1280.16,false,115.47,254.23,-1.3,null,1272.54,"1336",false,0],["406542","EZY67AH ","United Kingdom",1681341206,1681341206,7.5084,49.6738,11582.4,false,221.01,303.8,0,null,11330.94,"3236",false,0],["3c70b0","BCS58L  ","Germany",1681341206,1681341206,7.3626,49.9863,10668,false,265.4,61.65,0.33,null,10347.96,"1000",false,0]]}');
     console.log(jsonData);
 
@@ -101,6 +101,7 @@ async function init() {
         ctx.fillText(text, boxX + padding, boxY + padding + fontSize);
     }
 
+    // estimate flight route using heading and velocity
     function updatePosition(item, elapsedTime) {
         const R = 6371; // Earth's radius in km
         const distance = (item.velocity * elapsedTime) / 1000; // Convert m/s to km/s and multiply by elapsedTime in seconds
@@ -160,11 +161,11 @@ async function init() {
 
     let elapsedTime = 0;
     const interval = setInterval(() => {
-        elapsedTime += 2;
+        elapsedTime += 1;
 
         // Update point positions
         for (const item of data) {
-            updatePosition(item, 2);
+            updatePosition(item, 1);
         }
 
         // Redraw the canvas with updated positions
@@ -174,7 +175,7 @@ async function init() {
         if (elapsedTime >= 30) {
             clearInterval(interval);
         }
-    }, 2000);
+    }, 1000);
 }
 
 
@@ -227,7 +228,9 @@ function updatePosition(coord, heading, velocity, elapsedTime) {
 
 
 
-
-
-
 init();
+
+// update information from api every 30 seconds
+const update = setInterval(() => {
+    init();
+}, 30100);
