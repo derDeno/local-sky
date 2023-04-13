@@ -15,7 +15,7 @@ class ApiDTO {
 
     update(lat, long) {
         this.lat = lat;
-        this.long = long;        
+        this.long = long;
     }
 }
 
@@ -56,14 +56,20 @@ async function init() {
     const numberOfCircles = 5;
 
     // draw radar circles
-    function drawRadarCircle(ctx, centerX, centerY, radius) {
+    function drawRadarCircle(ctx, centerX, centerY, radius, km) {
         ctx.strokeStyle = 'grey';
         ctx.lineWidth = 1;
         ctx.beginPath();
         ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
         ctx.stroke();
+
+        // Draw distance label
+        ctx.font = '14px Arial';
+        ctx.fillStyle = 'grey';
+        ctx.fillText(km + ' km', centerX - radius + 4, centerY);
     }
 
+    // convert km to canvas points
     function distanceToCanvasUnits(distanceInKm) {
         const maxDistanceInCanvasUnits = canvas.width / 2;
         return (distanceInKm / distance) * maxDistanceInCanvasUnits;
@@ -83,7 +89,7 @@ async function init() {
         const padding = 5;
         const fontSize = 14;
 
-        ctx.font = `${fontSize}px Arial`;
+        ctx.font = `${fontSize}px Arial bold`;
         const textWidth = ctx.measureText(text).width;
         const boxWidth = textWidth + 2 * padding;
         const boxHeight = fontSize + 2 * padding;
@@ -93,11 +99,11 @@ async function init() {
         const boxY = y + padding;
 
         // Draw box
-        ctx.fillStyle = 'white';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.0)';
         ctx.fillRect(boxX, boxY, boxWidth, boxHeight);
 
         // Draw text
-        ctx.fillStyle = 'black';
+        ctx.fillStyle = 'white';
         ctx.fillText(text, boxX + padding, boxY + padding + fontSize);
     }
 
@@ -138,7 +144,7 @@ async function init() {
         for (let i = 1; i <= numberOfCircles; i++) {
             const distanceInKm = (i / numberOfCircles) * distance;
             const radius = distanceToCanvasUnits(distanceInKm);
-            drawRadarCircle(ctx, centerX, centerY, radius);
+            drawRadarCircle(ctx, centerX, centerY, radius, distanceInKm);
         }
 
         // Draw points with updated positions
@@ -152,7 +158,7 @@ async function init() {
             ctx.fill();
 
             drawInfoBox(ctx, position.x, position.y + 10, item.callsign);
-            drawInfoBox(ctx, position.x, position.y + 38, item.origin);
+            drawInfoBox(ctx, position.x, position.y + 30, item.origin);
         });
     }
 
